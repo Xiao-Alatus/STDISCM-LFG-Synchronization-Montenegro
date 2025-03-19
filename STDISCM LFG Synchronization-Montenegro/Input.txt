@@ -1,0 +1,6 @@
+n=3  // Maximum number of dungeon instances
+t=5   // Number of tanks
+h=5   // Number of healers
+d=16  // Number of DPS players
+t1=1 // Min time before a dungeon is cleared
+t2=3 // Max time before a dungeon is cleared
