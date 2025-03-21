@@ -2,10 +2,12 @@
 using System.IO;
 using System.Collections.Generic;
 using STDISCM_LFG_Synchronization_Montenegro;
+using System.Collections.Concurrent;
 
 class Program
 {
-    public static object queueLock = new object();
+    public static bool shutdown = false;
+    public static ConcurrentQueue<int> availableInstances = new ConcurrentQueue<int>();
     //Default Values
     public static uint t = 10, h = 10, d = 32, n = 5, t1 = 10, t2 = 60, maxNumberOfParties;
 
@@ -113,51 +115,45 @@ class Program
         maxNumberOfParties = Math.Min(t, Math.Min(h, d / 3));
         Console.WriteLine($"Max number of parties that can be formed: {maxNumberOfParties}");
 
-        t = t - maxNumberOfParties;
-        h = h - maxNumberOfParties;
-        d = d - 3 * maxNumberOfParties;
-
-
         List<DungeonInstance> instances = new List<DungeonInstance>();
-        List<Thread> instanceThreads = new List<Thread>();
-        Queue<DungeonInstance> instanceQueue = new Queue<DungeonInstance>();
         string[] instanceStatus = new string[n];
 
-     
         for (int i = 0; i < n; i++)
         {
             instanceStatus[i] = "empty";
-            DungeonInstance instance = new DungeonInstance(i, instanceStatus);
+            var instance = new DungeonInstance(i, instanceStatus, (int)t1, (int)t2);
             instances.Add(instance);
-            instanceQueue.Enqueue(instance); 
+            instance.Start();
+            availableInstances.Enqueue(i);
         }
 
-      
-        while (true)
+        int partiesLeft = (int)maxNumberOfParties;
+
+        while (partiesLeft > 0)
         {
-            lock (queueLock)
+            if (availableInstances.TryDequeue(out int instanceID))
             {
-                if (maxNumberOfParties == 0)
-                    break; 
-
-         
-                DungeonInstance instance = instanceQueue.Dequeue();
-                instanceQueue.Enqueue(instance);
-
-                
-                Thread instanceThread = new Thread(() => instance.Run((int)t1, (int)t2, ref maxNumberOfParties));
-                instanceThreads.Add(instanceThread);
-                instanceThread.Start();
+                t--; h--; d -= 3;
+                instances[instanceID].AssignWork(); 
+                partiesLeft--;
             }
+
+            Thread.Sleep(50);
         }
 
-        
-        foreach (var thread in instanceThreads)
+        Thread.Sleep((int)(t2 + 1) * 1000); 
+
+        Program.shutdown = true;
+        foreach (var instance in instances)
         {
-            thread.Join();
+            instance.Signal.Set(); 
         }
 
-     
+        foreach (var instance in instances)
+        {
+            instance.Join();
+        }
+
         Console.WriteLine("\n=== Summary ===\n");
         foreach (var instance in instances)
         {
