@@ -114,6 +114,9 @@ class Program
 
         maxNumberOfParties = Math.Min(t, Math.Min(h, d / 3));
         Console.WriteLine($"Max number of parties that can be formed: {maxNumberOfParties}");
+        t -= maxNumberOfParties;
+        h -= maxNumberOfParties;
+        d -= maxNumberOfParties * 3;
 
         List<DungeonInstance> instances = new List<DungeonInstance>();
         string[] instanceStatus = new string[n];
@@ -127,15 +130,12 @@ class Program
             availableInstances.Enqueue(i);
         }
 
-        int partiesLeft = (int)maxNumberOfParties;
-
-        while (partiesLeft > 0)
+        while (maxNumberOfParties > 0)
         {
             if (availableInstances.TryDequeue(out int instanceID))
             {
-                t--; h--; d -= 3;
                 instances[instanceID].AssignWork(); 
-                partiesLeft--;
+                maxNumberOfParties--;
             }
 
             Thread.Sleep(50);
