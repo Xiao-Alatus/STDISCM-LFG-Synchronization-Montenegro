@@ -19,9 +19,6 @@ namespace STDISCM_LFG_Synchronization_Montenegro
         private int t1, t2;
         private bool hasWork = false;
 
-
-
-        //short hand for getters
         public AutoResetEvent Signal => signal;
         public int InstanceID => instanceID;
         public int PartiesServed => partiesServed;
@@ -83,8 +80,6 @@ namespace STDISCM_LFG_Synchronization_Montenegro
                 Console.WriteLine($"\nInstance {instanceID + 1} completed.");
                 PrintInstanceStatus();
 
-                // Let dispatcher know this instance is free again
-                Program.availableInstances.Enqueue(instanceID);
             }
         }
 

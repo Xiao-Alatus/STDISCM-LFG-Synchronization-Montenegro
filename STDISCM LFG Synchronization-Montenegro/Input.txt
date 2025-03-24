@@ -1,4 +1,4 @@
-n=5  // Maximum number of dungeon instances
+n=3  // Maximum number of dungeon instances
 t=5   // Number of tanks
 h=5   // Number of healers
 d=16  // Number of DPS players

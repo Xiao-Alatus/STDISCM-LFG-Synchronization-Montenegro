@@ -7,7 +7,6 @@ using System.Collections.Concurrent;
 class Program
 {
     public static bool shutdown = false;
-    public static ConcurrentQueue<int> availableInstances = new ConcurrentQueue<int>();
     //Default Values
     public static uint t = 10, h = 10, d = 32, n = 5, t1 = 10, t2 = 60, maxNumberOfParties;
 
@@ -127,18 +126,20 @@ class Program
             var instance = new DungeonInstance(i, instanceStatus, (int)t1, (int)t2);
             instances.Add(instance);
             instance.Start();
-            availableInstances.Enqueue(i);
         }
 
+        //Round Robin Party Dispatcher
+        int currentIndex = 0;
         while (maxNumberOfParties > 0)
         {
-            if (availableInstances.TryDequeue(out int instanceID))
+            if (instanceStatus[currentIndex] == "empty")
             {
-                instances[instanceID].AssignWork(); 
+                instances[currentIndex].AssignWork();
                 maxNumberOfParties--;
             }
 
-            Thread.Sleep(50);
+            currentIndex = (currentIndex + 1) % instances.Count;
+            Thread.Sleep(50); 
         }
 
         Thread.Sleep((int)(t2 + 1) * 1000); 
