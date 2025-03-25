@@ -49,10 +49,9 @@ class Program
                     Console.WriteLine($"Invalid key '{key}'. Allowed keys are: n, t, h, d, t1, t2.");
                     return;
                 }
-
-                if (!uint.TryParse(valueStr, out uint value))
+                if (!uint.TryParse(valueStr, out uint value) || value > int.MaxValue)
                 {
-                    Console.WriteLine($"Invalid value for '{key}'. It must be a non-negative integer.");
+                    Console.WriteLine($"Invalid value for '{key}'. It must be between 0 and {int.MaxValue}.");
                     return;
                 }
 
@@ -120,28 +119,29 @@ class Program
         List<DungeonInstance> instances = new List<DungeonInstance>();
         string[] instanceStatus = new string[n];
 
-        for (int i = 0; i < n; i++)
+        for (uint i = 0; i < n; i++)
         {
             instanceStatus[i] = "empty";
-            var instance = new DungeonInstance(i, instanceStatus, (int)t1, (int)t2);
+            var instance = new DungeonInstance((int)i, instanceStatus, (int)t1, (int)t2);
             instances.Add(instance);
             instance.Start();
         }
 
         //Round Robin Party Dispatcher
-        int currentIndex = 0;
+        uint currentIndex = 0;
         while (maxNumberOfParties > 0)
         {
             if (instanceStatus[currentIndex] == "empty")
             {
-                instances[currentIndex].AssignWork();
+                instances[(int)currentIndex].AssignWork();
                 maxNumberOfParties--;
             }
 
-            currentIndex = (currentIndex + 1) % instances.Count;
+            currentIndex = (currentIndex + 1) % (uint)instances.Count;
             Thread.Sleep(50); 
         }
 
+        //Gives all the instances time to finish
         Thread.Sleep((int)(t2 + 1) * 1000); 
 
         Program.shutdown = true;
