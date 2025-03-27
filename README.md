@@ -2,6 +2,8 @@
 
 This project implements a Looking for Group Synchronization for queuing in dungeons just like in world of warcraft.
 
+Github Link: https://github.com/Xiao-Alatus/STDISCM-LFG-Synchronization-Montenegro
+
 ## Prerequisites
 
 Before building and running this project, make sure you have the following installed:
