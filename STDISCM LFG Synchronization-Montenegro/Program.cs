@@ -79,6 +79,17 @@ class Program
                 Console.WriteLine("Invalid input: 't2' (maximum instance time) must be greater than 0.");
                 return;
             }
+            if (t2 > 15)
+            {
+                Console.WriteLine("Invalid input: 't2' (maximum instance time) must be less than or equal to 15.");
+                return;
+
+            }
+            if (t1 > 15)
+            {
+                Console.WriteLine("Invalid input: 't1' (minimum instance time) must be less than or equal to 15.");
+                return;
+            }
             if (t1 > t2)
             {
                 Console.WriteLine("Invalid input: 't1' (minimum instance time) cannot be greater than 't2' (maximum instance time).");
