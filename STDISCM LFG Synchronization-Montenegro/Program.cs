@@ -64,19 +64,9 @@ class Program
                 Console.WriteLine("Invalid input: 'n' (maximum concurrent instances) must be greater than 0.");
                 return;
             }
-            if (t == 0)
+            if (n > 500)
             {
-                Console.WriteLine("Invalid input: 't' (tank players) is missing or zero.");
-                return;
-            }
-            if (h == 0)
-            {
-                Console.WriteLine("Invalid input: 'h' (healer players) is missing or zero.");
-                return;
-            }
-            if (d == 0)
-            {
-                Console.WriteLine("Invalid input: 'd' (DPS players) is missing or zero.");
+                Console.WriteLine("Invalid input: 'n' (maximum concurrent instances) must be less than 500.");
                 return;
             }
             if (t1 == 0)
